@@ -10,7 +10,7 @@ import { createBundleRenderer } from 'vue-server-renderer'
 import BaseRenderer from './base'
 
 export default class SSRRenderer extends BaseRenderer {
-  get rendererOptions () {
+  get rendererOptions() {
     const hasModules = fs.existsSync(path.resolve(this.options.rootDir, 'node_modules'))
 
     return {
@@ -21,7 +21,7 @@ export default class SSRRenderer extends BaseRenderer {
     }
   }
 
-  addAttrs (tags, referenceTag, referenceAttr) {
+  addAttrs(tags, referenceTag, referenceAttr) {
     const reference = referenceTag ? `<${referenceTag}` : referenceAttr
     if (!reference) {
       return tags
@@ -38,11 +38,11 @@ export default class SSRRenderer extends BaseRenderer {
     return tags
   }
 
-  renderResourceHints (renderContext) {
+  renderResourceHints(renderContext) {
     return this.addAttrs(renderContext.renderResourceHints(), null, 'rel="preload"')
   }
 
-  renderScripts (renderContext) {
+  renderScripts(renderContext) {
     let renderedScripts = this.addAttrs(renderContext.renderScripts(), 'script')
     if (this.options.render.asyncScripts) {
       renderedScripts = renderedScripts.replace(/defer>/g, 'defer async>')
@@ -50,15 +50,16 @@ export default class SSRRenderer extends BaseRenderer {
     return renderedScripts
   }
 
-  renderStyles (renderContext) {
-    return this.addAttrs(renderContext.renderStyles(), 'link')
+  renderStyles(renderContext) {
+    //return this.addAttrs(renderContext.renderStyles(), 'link')//remove by yale
+    return '';
   }
 
-  getPreloadFiles (renderContext) {
+  getPreloadFiles(renderContext) {
     return renderContext.getPreloadFiles()
   }
 
-  createRenderer () {
+  createRenderer() {
     // Create bundle renderer for SSR
     return createBundleRenderer(
       this.serverContext.resources.serverManifest,
@@ -66,13 +67,13 @@ export default class SSRRenderer extends BaseRenderer {
     )
   }
 
-  useSSRLog () {
+  useSSRLog() {
     if (!this.options.render.ssrLog) {
       return
     }
     const logs = []
     const devReporter = {
-      log (logObj) {
+      log(logObj) {
         logs.push({
           ...logObj,
           args: logObj.args.map(arg => format(arg))
@@ -87,7 +88,7 @@ export default class SSRRenderer extends BaseRenderer {
     }
   }
 
-  async render (renderContext) {
+  async render(renderContext) {
     // Call ssr:context hook to extend context from modules
     await this.serverContext.nuxt.callHook('vue-renderer:ssr:prepareContext', renderContext)
 
@@ -235,7 +236,8 @@ export default class SSRRenderer extends BaseRenderer {
       }
 
       if (shouldInjectScripts) {
-        APP += `<script>${serializedSession}</script>`
+        //APP += `<script>${serializedSession}</script>`//remove by yale
+        APP += `<script></script>`;
       }
     }
 
